@@ -1,3 +1,4 @@
+# This file use to record data.
 import numpy as np
 import pandas as pd
 # import pickle
@@ -8,26 +9,17 @@ if serial.Serial:
     serial.Serial().close()
 
 # Open the serial port
-s = serial.Serial("/dev/ttyACM0", baudrate=57600)
-# s.flushInput()
-#
-# while True:
-#     try:
-#         ser_bytes = s.readline()
-#         decoded_bytes = float(ser_bytes[0:len(ser_bytes)-2].decode("utf-8"))
-#         print(decoded_bytes)
-#     except:
-#         print("Keyboard Interrupt")
-#         break
-#
+s = serial.Serial("/dev/ttyACM1", baudrate=57600)  # COMx in window or /dev/ttyACMx with x is number of serial port.
+
 x = 0
 y = np.array([], dtype=int)
 print("START!")
-while x < (1 * 512):
+while x < (240 * 512):
     try:
+        if x % 512 == 0:
+            print(x / 512)
         x += 1
         data = s.readline().decode('utf-8').rstrip("\r\n")
-        print(data)
         y = np.append(y, int(data))
     except:
         pass
@@ -35,8 +27,8 @@ print(y)
 plt.plot(y)
 plt.show()
 
-# Use to get datatxtd
-np.savetxt("Dat_1.txt", y, fmt="%d")
+# Use to get data txt
+np.savetxt("Dat_1.txt", y, fmt="%d") # Save in int
 
 # Close the serial port
 print("DONE")
