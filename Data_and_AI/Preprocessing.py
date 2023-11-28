@@ -7,18 +7,15 @@ y = np.loadtxt("Dat_1.txt")
 # STFT
 f, t, Zxx = sp.signal.stft(y, 512, nperseg=512 * 10, noverlap=512 * 9)
 # 0.5-50 Hz
-min_freq_index = np.argmax(f > 0.5)
-max_freq_index = np.argmax(f > 50)
-f = f[min_freq_index:max_freq_index]
-Zxx = Zxx[min_freq_index:max_freq_index, :]
+trim = np.where((f >= 0.5) & (f <= 50))[0]
+f = f[trim]
+Zxx = Zxx[trim, :]
 
 plt.figure(1)
 plt.pcolormesh(t, f, np.abs(Zxx), vmin=-1, vmax=10, shading='auto')
 plt.title('STFT Magnitude')
 plt.ylabel('Frequency [Hz]')
 plt.xlabel('Time [sec]')
-plt.show()
-
 
 def FeatureExtract(t, f, Zxx):
     delta = np.array([], dtype=float)
@@ -31,18 +28,18 @@ def FeatureExtract(t, f, Zxx):
     tar = np.array([], dtype=float)
     dar = np.array([], dtype=float)
     dtabr = np.array([], dtype=float)
-    for i in t:
+    for i in range(0, int(t[-1])):
         indices = np.where((f >= 0.5) & (f <= 4))[0]
-        delta = np.append(delta, np.sum(Zxx[indices]))
+        delta = np.append(delta, np.sum(np.abs(Zxx[indices, i])))
 
         indices = np.where((f >= 4) & (f <= 8))[0]
-        theta = np.append(theta, np.sum(Zxx[indices]))
+        theta = np.append(theta, np.sum(np.abs(Zxx[indices, i])))
 
         indices = np.where((f >= 8) & (f <= 13))[0]
-        alpha = np.append(alpha, np.sum(Zxx[indices]))
+        alpha = np.append(alpha, np.sum(np.abs(Zxx[indices, i])))
 
         indices = np.where((f >= 13) & (f <= 30))[0]
-        beta = np.append(beta, np.sum(Zxx[indices]))
+        beta = np.append(beta, np.sum(np.abs(Zxx[indices, i])))
 
         abr = alpha / beta
         tbr = theta / beta
@@ -65,6 +62,11 @@ def FeatureExtract(t, f, Zxx):
     return diction
 
 
-# feature = FeatureExtract(t, f, Zxx)
-# plt.plot(feature['delta'])
+feature = FeatureExtract(t, f, Zxx)
+plt.figure(2)
+plt.plot(feature['delta'], label="delta")
+plt.plot(feature['theta'], label="theta")
+plt.plot(feature['alpha'], label="alpha")
+plt.plot(feature['beta'], label="beta")
+plt.legend()
 # plt.show()
