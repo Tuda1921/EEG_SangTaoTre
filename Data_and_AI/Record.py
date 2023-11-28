@@ -9,7 +9,7 @@ if serial.Serial:
     serial.Serial().close()
 
 # Open the serial port
-s = serial.Serial("/dev/ttyACM1", baudrate=57600)  # COMx in window or /dev/ttyACMx with x is number of serial port.
+s = serial.Serial("COM3", baudrate=57600)  # COMx in window or /dev/ttyACMx with x is number of serial port.
 
 x = 0
 y = np.array([], dtype=int)
@@ -28,7 +28,7 @@ plt.plot(y)
 plt.show()
 
 # Use to get data txt
-np.savetxt("Dat_1.txt", y, fmt="%d") # Save in int
+np.savetxt("Dat_1.txt", y, fmt="%d")  # Save in int
 
 # Close the serial port
 print("DONE")
