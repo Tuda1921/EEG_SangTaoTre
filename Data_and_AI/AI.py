@@ -34,13 +34,14 @@ models = [
     # LGBMClassifier()
 ]
 df = pd.DataFrame.from_dict(feature)
-df.drop(axis=0, index=0)
 X = df.values
-y = pd.concat([pd.Series([0] * 120), pd.Series([1] * 120)]).values  # 0 la co nham mat, 1 la mo mat
+
+# 0 la nham mat, 1 la mo mat, 2 la tap trung
+y = pd.concat([pd.Series([0] * (180//15)), pd.Series([1] * (180//15)), pd.Series([2] * (240//15))]).values
+
 # EDA data
 
-print(X)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 results = []
 for model in models:
     model.fit(X_train, y_train)

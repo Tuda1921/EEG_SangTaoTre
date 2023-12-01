@@ -1,21 +1,32 @@
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.decomposition import PCA
+y = np.loadtxt("Data/Subject_2.txt")
+# mean = np.mean(y)
+# std = np.std(y)
+# # Lọc mảng theo phân phối chuẩn
+# y = y[(y > mean - 2 * std) & (y < mean + 2 * std)]
 
-y = np.loadtxt("Dat_1.txt")
 
 # STFT
 f, t, Zxx = sp.signal.stft(y, 512, nperseg=512 * 10, noverlap=512 * 9)
 # 0.5-50 Hz
-trim = np.where((f >= 0.5) & (f <= 50))[0]
-f = f[trim]
-Zxx = Zxx[trim, :]
+# trim = np.where((f >= 0.5) & (f <= 50))[0]
+# f = f[trim]
+# Zxx = Zxx[trim, :]
+
+plt.figure(0)
+plt.plot(y)
 
 plt.figure(1)
 plt.pcolormesh(t, f, np.abs(Zxx), vmin=-1, vmax=10, shading='auto')
 plt.title('STFT Magnitude')
+plt.ylim(0.5,50)
 plt.ylabel('Frequency [Hz]')
 plt.xlabel('Time [sec]')
+# plt.show()
 
 def FeatureExtract(t, f, Zxx):
     delta = np.array([], dtype=float)
@@ -28,7 +39,7 @@ def FeatureExtract(t, f, Zxx):
     tar = np.array([], dtype=float)
     dar = np.array([], dtype=float)
     dtabr = np.array([], dtype=float)
-    for i in range(0, int(t[-1])):
+    for i in range(0, int(t[-1])//15):
         indices = np.where((f >= 0.5) & (f <= 4))[0]
         delta = np.append(delta, np.sum(np.abs(Zxx[indices, i])))
 
@@ -41,12 +52,12 @@ def FeatureExtract(t, f, Zxx):
         indices = np.where((f >= 13) & (f <= 30))[0]
         beta = np.append(beta, np.sum(np.abs(Zxx[indices, i])))
 
-        abr = alpha / beta
-        tbr = theta / beta
-        dbr = delta / beta
-        tar = theta / alpha
-        dar = delta / alpha
-        dtabr = (alpha + beta) / (delta + theta)
+    abr = alpha / beta
+    tbr = theta / beta
+    dbr = delta / beta
+    tar = theta / alpha
+    dar = delta / alpha
+    dtabr = (alpha + beta) / (delta + theta)
 
     diction = {"delta": delta,
                "theta": theta,
@@ -69,4 +80,7 @@ plt.plot(feature['theta'], label="theta")
 plt.plot(feature['alpha'], label="alpha")
 plt.plot(feature['beta'], label="beta")
 plt.legend()
-# plt.show()
+plt.show()
+# df = pd.DataFrame.from_dict(feature)
+# df.to_csv("test.csv")
+# print(df)
