@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
-# import matplotlib.pyplot as plt
-from Preprocessing import feature
-from Preprocessing import feature1
+import matplotlib.pyplot as plt
+from Preprocessing import FeatureExtract
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -34,15 +33,22 @@ models = [
     # XGBClassifier(),
     # LGBMClassifier()
 ]
-df = pd.DataFrame.from_dict(feature)
-X = df.values
-X1 = pd.DataFrame.from_dict(feature1).values
+y = np.loadtxt("Data/Subject_1_nhammat.txt")
+y1 = np.loadtxt("Data/Subject_1_momat.txt")
+y2 = np.loadtxt("Data/Subject_1.txt")
+
+df = pd.DataFrame.from_dict(FeatureExtract(y))
+df1 = pd.DataFrame.from_dict(FeatureExtract(y1))
+df2 = pd.DataFrame.from_dict(FeatureExtract(y2))
+
+X = pd.concat([df, df1]).values
+X1 = df2.values
 # 0 la nham mat, 1 la mo mat, 2 la tap trung
-y = pd.concat([pd.Series([0] * (180//1)), pd.Series([1] * (180//1)), pd.Series([2] * (240//1))]).values
+y = pd.concat([pd.Series([0] * len(df)), pd.Series([1] * len(df1))]).values
 
 # EDA data
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 results = []
 for model in models:
     model.fit(X_train, y_train)
@@ -61,11 +67,12 @@ for model in models:
         accuracy_list.append(accuracy)
     avg_accuracy = np.mean(accuracy_list)
     results.append((type(model).__name__, train_score, test_score, avg_accuracy))
-    print(model.predict(X1))
+    print(model.predict(df2.values))
+    plt.plot(model.predict(X1))
+    plt.show()
 
 res = pd.DataFrame(results, columns=['Model', 'Train Accuracy', 'Test Accuracy', 'K fold Accuracy'])
 print(res)
-
 
 # print("Test score: ", score)
 # filename = 'test.h5'
