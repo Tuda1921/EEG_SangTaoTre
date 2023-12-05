@@ -14,9 +14,10 @@ y = np.array([], dtype=int)
 # Open the serial port
 # time.sleep(30)
 s = serial.Serial("COM3", baudrate=57600)  # COMx in window or /dev/ttyACMx with x is number of serial port.
-file = open(r"C:\Users\nguye\PycharmProjects\EEG_SangTaoTre\EEG_SangTaoTre\Data_and_AI\Data\Subject_1_dingu.txt", "a")
+path = r"C:\Users\nguye\PycharmProjects\EEG_SangTaoTre\EEG_SangTaoTre\Data_and_AI\Data\Subject_1_testmonham.txt"
+file = open(path, "a")
 print("START!")
-while x < (60*90 * 512):
+while x < (60*3 * 512):
     try:
         if x % 512 == 0:
             print(x / 512)
@@ -33,7 +34,7 @@ plt.plot(y)
 plt.show()
 
 # Use to get data txt
-np.savetxt("Subject_1_ngu.txt", y, fmt="%d")  # Save in int
+# np.savetxt("Subject_1_momat.txt", y, fmt="%d")  # Save in int
 
 # Close the serial port
 print("DONE")

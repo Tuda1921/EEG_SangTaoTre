@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 # import matplotlib.pyplot as plt
 from Preprocessing import feature
+from Preprocessing import feature1
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -35,13 +36,13 @@ models = [
 ]
 df = pd.DataFrame.from_dict(feature)
 X = df.values
-
+X1 = pd.DataFrame.from_dict(feature1).values
 # 0 la nham mat, 1 la mo mat, 2 la tap trung
-y = pd.concat([pd.Series([0] * (180//15)), pd.Series([1] * (180//15)), pd.Series([2] * (240//15))]).values
+y = pd.concat([pd.Series([0] * (180//1)), pd.Series([1] * (180//1)), pd.Series([2] * (240//1))]).values
 
 # EDA data
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 results = []
 for model in models:
     model.fit(X_train, y_train)
@@ -60,9 +61,11 @@ for model in models:
         accuracy_list.append(accuracy)
     avg_accuracy = np.mean(accuracy_list)
     results.append((type(model).__name__, train_score, test_score, avg_accuracy))
+    print(model.predict(X1))
 
 res = pd.DataFrame(results, columns=['Model', 'Train Accuracy', 'Test Accuracy', 'K fold Accuracy'])
 print(res)
+
 
 # print("Test score: ", score)
 # filename = 'test.h5'

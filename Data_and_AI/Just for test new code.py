@@ -1,14 +1,19 @@
 import numpy as np
-from scipy.stats import norm, kurtosis
-import matplotlib.pyplot as plt
-import scipy.stats as stats
+import mne
 
-data = np.loadtxt("Data/Subject_2.txt")
-mean = np.mean(data)
-std = np.std(data)
+# Đường dẫn đến tệp tin văn bản
+file_path = "Data/Subject_2.txt"
 
-# Lọc mảng theo phân phối chuẩn
-filtered_data = data[(data > mean - 2 * std) & (data < mean + 2 * std)]
-plt.plot(filtered_data)
-plt.title('Phân phối của mảng')
-plt.show()
+# Đọc dữ liệu từ tệp tin văn bản
+data = np.loadtxt(file_path)
+
+# Tạo một đối tượng Raw của MNE từ dữ liệu
+ch_names = ['EEG Channel']  # Tên kênh EEG
+fs = 512  # Tần số lấy mẫu (Hz)
+info = mne.create_info(ch_names=ch_names, sfreq=fs)
+raw = mne.io.RawArray(data.reshape(1, -1), info)
+
+# Khám phá và xử lý dữ liệu EEG
+print(type(raw))  # Xem thông tin về kênh, tần số lấy mẫu, v.v.
+
+# Tiếp tục xử lý dữ liệu EEG theo nhu cầu của bạn
