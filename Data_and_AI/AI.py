@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from Preprocessing import FeatureExtract
+from Preprocessing import filter_data
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -34,12 +35,14 @@ models = [
     # LGBMClassifier()
 ]
 y = np.loadtxt("Data/Subject_1_nhammat.txt")
+y = filter_data(y)
 y1 = np.loadtxt("Data/Subject_1_momat.txt")
-y2 = np.loadtxt("Data/Subject_1.txt")
-
-df = pd.DataFrame.from_dict(FeatureExtract(y))
-df1 = pd.DataFrame.from_dict(FeatureExtract(y1))
-df2 = pd.DataFrame.from_dict(FeatureExtract(y2))
+y1 = filter_data(y1)
+y2 = np.loadtxt("Data/Subject_1_dingu.txt")
+y2 = filter_data(y2)
+df = pd.DataFrame.from_dict(FeatureExtract(y, plot=0))
+df1 = pd.DataFrame.from_dict(FeatureExtract(y1, plot=0))
+df2 = pd.DataFrame.from_dict(FeatureExtract(y2, plot=0))
 
 X = pd.concat([df, df1]).values
 X1 = df2.values
@@ -79,4 +82,3 @@ print(res)
 # pickle.dump(model, open(filename, 'wb'))
 # loaded_model = pickle.load(open(filename, 'rb'))
 # print(model.predict(X_test))
-

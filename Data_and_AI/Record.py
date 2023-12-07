@@ -12,12 +12,12 @@ time.sleep(1)
 x = 0
 y = np.array([], dtype=int)
 # Open the serial port
-# time.sleep(30)
-s = serial.Serial("COM3", baudrate=57600)  # COMx in window or /dev/ttyACMx with x is number of serial port.
-path = r"C:\Users\nguye\PycharmProjects\EEG_SangTaoTre\EEG_SangTaoTre\Data_and_AI\Data\Subject_1_testmonham.txt"
+time.sleep(1)
+s = serial.Serial("COM3", baudrate=57600)  # COMx in window or /dev/ttyACMx in Ubuntu with x is number of serial port.
+path = r"Data_Iso\Subject_1_15Hz.txt"
 file = open(path, "a")
 print("START!")
-while x < (60*3 * 512):
+while x < (60*2 * 512):
     try:
         if x % 512 == 0:
             print(x / 512)

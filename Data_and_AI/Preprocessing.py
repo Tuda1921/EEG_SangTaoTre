@@ -11,14 +11,14 @@ def filter_data(data):
     data = sp.signal.lfilter(b, a, data)
 
     # filter for EMG by interpolated
-    filtered_data = data[(np.abs(data) <= 128)]
+    filtered_data = data[(np.abs(data) <= 256)]
     x = np.arange(len(filtered_data))
     interpolated_data = interp1d(x, filtered_data)(np.linspace(0, len(filtered_data) - 1, len(data)))
     return interpolated_data
 
 
 def FeatureExtract(data, plot):
-    f, t, Zxx = sp.signal.stft(data, 512, nperseg=512 * 15, noverlap=512 * 14)
+    f, t, Zxx = sp.signal.stft(data, 512, nperseg=512 * 10, noverlap=512 * 9)
     delta = np.array([], dtype=float)
     theta = np.array([], dtype=float)
     alpha = np.array([], dtype=float)
@@ -60,42 +60,47 @@ def FeatureExtract(data, plot):
                "dar": dar,
                "dtabr": dtabr
                }
-    if plot == 1:
-        # Tạo hình ảnh chính và các hình ảnh con
-        fig = plt.figure(figsize=(12, 6))
-
-        # Hình ảnh 1
-        ax1 = fig.add_subplot(2, 2, 1)
-        ax1.plot(data)
-        ax1.set_title('EEG Raw Values')
-        ax1.set_xlabel('Samples')
-        ax1.set_ylabel('RawValue')
-
-        # Hình ảnh 2
-        ax2 = fig.add_subplot(1, 2, 2)
-        ax2.pcolormesh(t, f, np.abs(Zxx), vmin=-1, vmax=10, shading='auto')
-        ax2.set_title('STFT Magnitude')
-        ax2.set_xlabel('Time [sec]')
-        ax2.set_ylabel('Frequency [Hz]')
-        ax2.set_ylim(0.5, 40)
-
-        # Hình ảnh 3
-        ax3 = fig.add_subplot(2, 2, 3)
-        ax3.plot(diction['delta'], label="delta")
-        ax3.plot(diction['theta'], label="theta")
-        ax3.plot(diction['alpha'], label="alpha")
-        ax3.plot(diction['beta'], label="beta")
-        ax3.set_title('Frequency Bands')
-        ax3.set_xlabel('Power')
-        ax3.set_ylabel('Time [sec]')
-        ax3.legend()
-
-        # Hiển thị hình ảnh
-        plt.tight_layout()
-        plt.show()
+    # if plot == 1:
+    #     # Tạo hình ảnh chính và các hình ảnh con
+    #     fig = plt.figure(figsize=(12, 6))
+    #
+    #     # Plot raw
+    #     ax1 = fig.add_subplot(2, 2, 1)
+    #     ax1.plot(data)
+    #     ax1.set_title('EEG Raw Values')
+    #     ax1.set_xlabel('Samples')
+    #     ax1.set_ylabel('RawValue')
+    #
+    #     # Plot STFT
+    #     ax2 = fig.add_subplot(1, 2, 2)
+    #     ax2.pcolormesh(t, f, np.abs(Zxx), vmin=-1, vmax=10, shading='auto')
+    #     ax2.set_title('STFT Magnitude')
+    #     ax2.set_xlabel('Time [sec]')
+    #     ax2.set_ylabel('Frequency [Hz]')
+    #     ax2.set_ylim(0.5, 40)
+    #
+    #     # Plot brainwave
+    #     ax3 = fig.add_subplot(2, 2, 3)
+    #     ax3.plot(diction['delta'], label="delta")
+    #     ax3.plot(diction['theta'], label="theta")
+    #     ax3.plot(diction['alpha'], label="alpha")
+    #     ax3.plot(diction['beta'], label="beta")
+    #     ax3.set_title('Frequency Bands')
+    #     ax3.set_xlabel('Power')
+    #     ax3.set_ylabel('Time [sec]')
+    #     ax3.legend()
+    #
+    #     # Hiển thị hình ảnh
+    #     plt.tight_layout()
+    #     # plt.show()
     return diction
 
 
-y = np.loadtxt("Data/Subject_1_testmonham.txt")
-y = filter_data(y)
-FeatureExtract(y, plot=1)
+# y = np.loadtxt("Data_Iso/Subject_1_nm_15Hz.txt")
+# y = filter_data(y)
+# FeatureExtract(y, plot=1)
+#
+# y1 = np.loadtxt("Data_Iso/Subject_1_nm_30Hz.txt")
+# y1 = filter_data(y1)
+# FeatureExtract(y1, plot=1)
+# plt.show()
