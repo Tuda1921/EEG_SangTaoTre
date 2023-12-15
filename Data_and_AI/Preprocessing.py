@@ -10,6 +10,7 @@ def filter_data(data):
     b, a = sp.signal.butter(4, band, btype='band', analog=False, output='ba')
     data = sp.signal.lfilter(b, a, data)
 
+    plt.hist(data, bins=10, edgecolor='black')
     # filter for EMG by interpolated
     filtered_data = data[(np.abs(data) <= 256)]
     x = np.arange(len(filtered_data))
