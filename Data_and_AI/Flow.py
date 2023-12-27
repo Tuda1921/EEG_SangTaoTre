@@ -12,7 +12,7 @@ if serial.Serial:
 time.sleep(1)
 # Open the serial port
 time.sleep(1)
-s = serial.Serial("COM3", baudrate=57600)  # COMx in window or /dev/ttyACMx in Ubuntu with x is number of serial port.
+s = serial.Serial("COM8", baudrate=57600)  # COMx in window or /dev/ttyACMx in Ubuntu with x is number of serial port.
 # path = r"Data_Iso\Subject_1_15Hz.txt"
 # file = open(path, "a")
 
@@ -62,7 +62,15 @@ while x < (time_rec * 512):
                 sliding_window_start = x - k
                 sliding_window_end = x
                 sliding_window = np.array(y[sliding_window_start:sliding_window_end])  # sliding_window ~ y
-
+                flm = 512
+                L = len(sliding_window)
+                Y = np.fft.fft(sliding_window)
+                Y[0] = 0
+                P2 = np.abs(Y / L)
+                P1 = P2[:L // 2 + 1]
+                P1[1:-1] = 2 * P1[1:-1]
+                plt.plot(P1)
+                plt.show()
                 # preprocess
                 sliding_window = filter_data(sliding_window)
                 feature_window = FeatureExtract(sliding_window, plot=0)
