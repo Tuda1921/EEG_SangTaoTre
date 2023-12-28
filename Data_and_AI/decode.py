@@ -4,8 +4,8 @@ import serial
 def init_ser(port, baudrate):
     if serial.Serial:
         serial.Serial().close()
-    ser = serial.Serial("COM8",
-                        baudrate=57600)  # COMx in window or /dev/ttyACMx in Ubuntu with x is number of serial port.
+    ser = serial.Serial(port,
+                        baudrate)  # COMx in window or /dev/ttyACMx in Ubuntu with x is number of serial port.
     return ser
 
 

@@ -9,15 +9,9 @@ import scipy as sp
 from Preprocessing import slide_func, filter_data, FeatureExtract
 from decode import init_ser, read_one_byte,process_brainwave_data
 
-if serial.Serial:
-    serial.Serial().close()
-time.sleep(1)
-# Open the serial port
-time.sleep(1)
-s = serial.Serial("COM8", baudrate=57600)  # COMx in window or /dev/ttyACMx in Ubuntu with x is number of serial port.
+s = init_ser("COM4", 57600) # COMx in window or /dev/ttyACMx in Ubuntu with x is number of serial port.
 # path = r"Data_Iso\Subject_1_15Hz.txt"
 # file = open(path, "a")
-
 x = 0  # iterator of sample
 y = np.array([], dtype=int)  # value
 time_rec = 60 * 2
@@ -29,32 +23,27 @@ slide = []
 
 print("START!")
 while x < (time_rec * 512):
-    try:
-        noise.append(0)
-        if x % 512 == 0:
-            print(x / 512)
-        x += 1
-        data = s.readline().decode('utf-8').rstrip("\r\n")
-        y = np.append(y, int(data))
-        if y[x] < -255 or y[x] > 255:
-            noise[x] += 1
-        if slide_func(y, window_size=window_size, iter=x) is not None:
-            slide = slide_func(y, window_size=window_size, iter=x)
-            # preprocess
-            slide = filter_data(slide)
-            f, t, Zxx = sp.signal.stft(slide, 512, nperseg=512 * 10, noverlap=512 * 9)
+    if x % 512 == 0:
+        print(x / 512)
+    diction = process_brainwave_data(s)
+    if diction != -999:
+        y = np.append(y, diction["raw_data"])
+        print(y)
+        # if slide_func(y, window_size=window_size, iter=x) is not None:
+        slide = slide_func(y, window_size=window_size, iter=x)
+        # preprocess
+        # slide = filter_data(slide)
+        # f, t, Zxx = sp.signal.stft(slide, 512, nperseg=512 * 10, noverlap=512 * 9)
+        # feature_window = FeatureExtract(slide)
+        # feature.append(feature_window)
 
-            feature_window = FeatureExtract(slide)
-            feature.append(feature_window)
+        # plot
+        # AI
 
-            # plot
-            # AI
-
-            slide = []
-            # file.write(data)
-            # file.write('\n')
-    except:
-        pass
+        slide = []
+        # file.write(data)
+        # file.write('\n')
+    x += 1
 print(y)
 plt.plot(y)
 plt.show()

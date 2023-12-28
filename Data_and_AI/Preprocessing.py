@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 
 def slide_func(data, window_size, iter):
-    if iter >= k:
+    if iter >= window_size:
         if iter % (1 * 512) == 0:
-            sliding_window_start = iter - k
+            sliding_window_start = iter - window_size
             sliding_window_end = iter
-            sliding_window = np.array(y[sliding_window_start:sliding_window_end])  # sliding_window ~ y
+            sliding_window = np.array(data[sliding_window_start:sliding_window_end])  # sliding_window ~ y
             return sliding_window
         return None
     return None
