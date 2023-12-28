@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import serial
 import time
 import pickle
+import scipy as sp
 from Preprocessing import slide_func, filter_data, FeatureExtract
 from decode import init_ser, read_one_byte,process_brainwave_data
 
