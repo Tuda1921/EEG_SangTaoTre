@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 import serial
 import time
 import pickle
-from Preprocessing import filter_data, FeatureExtract
+from Preprocessing import slide_func, filter_data, FeatureExtract
+from decode import init_ser, read_one_byte,process_brainwave_data
 
 if serial.Serial:
     serial.Serial().close()
@@ -23,16 +24,7 @@ k = 10 * 512  # window
 window_size = k
 noise = []
 feature = []
-
-plt.ion()
-plx = np.arange(window_size)
-ply = np.zeros(window_size)
-fig = plt.figure(figsize=(12, 6))
-ax1 = fig.add_subplot(2, 2, 1)
-ax1.set_title('EEG Raw Values')
-ax1.set_xlabel('Samples')
-ax1.set_ylabel('RawValue')
-raw, = ax1.plot(plx, ply)
+slide = []
 
 print("START!")
 while x < (time_rec * 512):
@@ -45,43 +37,21 @@ while x < (time_rec * 512):
         y = np.append(y, int(data))
         if y[x] < -255 or y[x] > 255:
             noise[x] += 1
+        if slide_func(y, window_size=window_size, iter=x) is not None:
+            slide = slide_func(y, window_size=window_size, iter=x)
+            # preprocess
+            slide = filter_data(slide)
+            f, t, Zxx = sp.signal.stft(slide, 512, nperseg=512 * 10, noverlap=512 * 9)
 
-        # Cập nhật sliding window
-        ply = np.roll(ply, -1)
-        ply[-1] = int(data)
+            feature_window = FeatureExtract(slide)
+            feature.append(feature_window)
 
-        # Cập nhật đồ thị
-        raw.set_ydata(ply)
-        ax1.relim()  # Cập nhật giới hạn trục
-        ax1.autoscale_view()  # Tự động điều chỉnh tỷ lệ đồ thị
-        plt.draw()
-        plt.pause(0.01)  # Tạm dừng khoảng thời gian ngắn
+            # plot
+            # AI
 
-        if x >= k:
-            if x % (1 * 512) == 0:
-                sliding_window_start = x - k
-                sliding_window_end = x
-                sliding_window = np.array(y[sliding_window_start:sliding_window_end])  # sliding_window ~ y
-                flm = 512
-                L = len(sliding_window)
-                Y = np.fft.fft(sliding_window)
-                Y[0] = 0
-                P2 = np.abs(Y / L)
-                P1 = P2[:L // 2 + 1]
-                P1[1:-1] = 2 * P1[1:-1]
-                plt.plot(P1)
-                plt.show()
-                # preprocess
-                sliding_window = filter_data(sliding_window)
-                feature_window = FeatureExtract(sliding_window, plot=0)
-                feature.append(feature_window)
-
-                # plot
-                # AI
-
-                sliding_window = []
-        # file.write(data)
-        # file.write('\n')
+            slide = []
+            # file.write(data)
+            # file.write('\n')
     except:
         pass
 print(y)
