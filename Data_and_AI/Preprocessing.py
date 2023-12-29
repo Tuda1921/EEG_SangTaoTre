@@ -28,8 +28,8 @@ def filter_data(data):
     return interpolated_data
 
 
-def FeatureExtract(data):
-    f, t, Zxx = sp.signal.stft(data, 512, nperseg=512 * 10, noverlap=512 * 9)
+def FeatureExtract(data,plot):
+    f, t, Zxx = sp.signal.stft(data, 512, nperseg=512 * 15, noverlap=512 * 14)
     delta = np.array([], dtype=float)
     theta = np.array([], dtype=float)
     alpha = np.array([], dtype=float)
@@ -74,17 +74,17 @@ def FeatureExtract(data):
     if plot == 1:
         # Tạo hình ảnh chính và các hình ảnh con
         fig = plt.figure(figsize=(12, 6))
-
         # Plot raw
         ax1 = fig.add_subplot(2, 2, 1)
         ax1.plot(data)
         ax1.set_title('EEG Raw Values')
         ax1.set_xlabel('Samples')
         ax1.set_ylabel('RawValue')
+        ax1.set_ylim(-256,256)
 
         # Plot STFT
         ax2 = fig.add_subplot(1, 2, 2)
-        ax2.pcolormesh(t, f, np.abs(Zxx), vmin=-1, vmax=10, shading='auto')
+        ax2.pcolormesh(t, f, np.abs(Zxx), vmin=-1, vmax=5, shading='auto')
         ax2.set_title('STFT Magnitude')
         ax2.set_xlabel('Time [sec]')
         ax2.set_ylabel('Frequency [Hz]')
@@ -99,11 +99,12 @@ def FeatureExtract(data):
         ax3.set_title('Frequency Bands')
         ax3.set_xlabel('Power')
         ax3.set_ylabel('Time [sec]')
+        ax3.set_ylim(0,150)
         ax3.legend()
 
         # Hiển thị hình ảnh
         plt.tight_layout()
-        # plt.show()
+        plt.savefig("test.png")
     return diction
 
 

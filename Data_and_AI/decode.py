@@ -15,7 +15,7 @@ def read_one_byte(ser):
 
 generated_checksum = 0
 checksum = 0
-payload_data = [0] * 64
+payload_data = [0] * 65
 poor_quality = 200
 attention = 0
 meditation = 0
@@ -54,6 +54,7 @@ def process_brainwave_data(ser):
                         i += 1
                         raw_data = (payload_data[i + 1] << 8) | payload_data[i + 2]
                         # rawData = rawData * 1.8 / 4096 / 2000;
+                        # print(raw_data)
                         i += 2
                     elif packet == 0x83:  # EEG values
                         i += 1
@@ -65,10 +66,11 @@ def process_brainwave_data(ser):
                         i += 1
         if big_packet:
             diction = {"poor_quality": poor_quality,  # 0-200
-                       # "attention": attention,
-                       # "meditation": meditation,
-                       # "eeg_values": eeg_values,
+                       "attention": attention,
+                       "meditation": meditation,
+                       "eeg_values": eeg_values,
                        "raw_data": raw_data}
             big_packet = False
             return diction
+        return -999
     return -999

@@ -13,19 +13,20 @@ x = 0
 y = np.array([], dtype=int)
 # Open the serial port
 time.sleep(1)
-s = serial.Serial("COM3", baudrate=57600)  # COMx in window or /dev/ttyACMx in Ubuntu with x is number of serial port.
-path = r"Data_Iso\Subject_1_15Hz.txt"
-file = open(path, "a")
+s = serial.Serial("COM4", baudrate=57600)  # COMx in window or /dev/ttyACMx in Ubuntu with x is number of serial port.
+# path = r"Data_Iso\Subject_1_15Hz.txt"
+# file = open(path, "a")
 print("START!")
-while x < (60*2 * 512):
+while x < (20 * 512):
     try:
         if x % 512 == 0:
             print(x / 512)
         x += 1
         data = s.readline().decode('utf-8').rstrip("\r\n")
         y = np.append(y, int(data))
-        file.write(data)
-        file.write('\n')
+        print(int(data))
+        # file.write(data)
+        # file.write('\n')
 
     except:
         pass
@@ -39,4 +40,4 @@ plt.show()
 # Close the serial port
 print("DONE")
 s.close()
-file.close()
+# file.close()
