@@ -20,7 +20,7 @@ def filter_data(data):
     b, a = sp.signal.butter(4, band, btype='band', analog=False, output='ba')
     data = sp.signal.lfilter(b, a, data)
 
-    plt.hist(data, bins=10, edgecolor='black')
+    # plt.hist(data, bins=10, edgecolor='black')
     # filter for EMG by interpolated
     filtered_data = data[(np.abs(data) <= 256)]
     x = np.arange(len(filtered_data))
@@ -28,18 +28,12 @@ def filter_data(data):
     return interpolated_data
 
 
-def FeatureExtract(data,plot):
-    f, t, Zxx = sp.signal.stft(data, 512, nperseg=512 * 15, noverlap=512 * 14)
+def FeatureExtract(data, plot):
+    f, t, Zxx = sp.signal.stft(data, 512, nperseg=15 * 512, noverlap=14 * 512)
     delta = np.array([], dtype=float)
     theta = np.array([], dtype=float)
     alpha = np.array([], dtype=float)
     beta = np.array([], dtype=float)
-    abr = np.array([], dtype=float)
-    tbr = np.array([], dtype=float)
-    dbr = np.array([], dtype=float)
-    tar = np.array([], dtype=float)
-    dar = np.array([], dtype=float)
-    dtabr = np.array([], dtype=float)
     for i in range(0, int(t[-1])):
         indices = np.where((f >= 0.5) & (f <= 4))[0]
         delta = np.append(delta, np.sum(np.abs(Zxx[indices, i])))
@@ -73,14 +67,14 @@ def FeatureExtract(data,plot):
                }
     if plot == 1:
         # Tạo hình ảnh chính và các hình ảnh con
-        fig = plt.figure(figsize=(12, 6))
+        fig = plt.figure(figsize=(10, 5))
         # Plot raw
         ax1 = fig.add_subplot(2, 2, 1)
         ax1.plot(data)
         ax1.set_title('EEG Raw Values')
         ax1.set_xlabel('Samples')
         ax1.set_ylabel('RawValue')
-        ax1.set_ylim(-256,256)
+        ax1.set_ylim(-256, 256)
 
         # Plot STFT
         ax2 = fig.add_subplot(1, 2, 2)
@@ -99,13 +93,16 @@ def FeatureExtract(data,plot):
         ax3.set_title('Frequency Bands')
         ax3.set_xlabel('Power')
         ax3.set_ylabel('Time [sec]')
-        ax3.set_ylim(0,150)
+        ax3.set_ylim(0, 400)
         ax3.legend()
 
         # Hiển thị hình ảnh
         plt.tight_layout()
         plt.savefig("test.png")
+        plt.close()
+
     return diction
+
 
 
 # y = np.loadtxt("Data_Iso/Subject_1_nm_15Hz.txt")

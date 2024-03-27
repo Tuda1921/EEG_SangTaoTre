@@ -14,8 +14,7 @@ if serial.Serial:
     serial.Serial().close()
 
 # Open the serial port
-s = serial.Serial("COM8", baudrate=57600)
-#s_sound = serial.Serial("COM7", baudrate=57600)
+s = serial.Serial("COM10", baudrate=57600)
 
 def FeatureExtract(y):
     # y trong truong hop nay co do dai 15*512
@@ -133,7 +132,7 @@ def start_test():
                 # print(FeatureExtract(y))
                 # s_sound.write(int(model.predict(feature_test)))  # output to sound
                 # print(int(model.predict(feature_test)))
-                # show_image()
+                show_image()
 
 
 def show_image():
@@ -172,7 +171,7 @@ isPause = tk.IntVar()
 pause_button = tk.Checkbutton(window, text="Dừng", variable=isPause, onvalue=1, offvalue=0)
 pause_button.pack(pady=10)
 
-start_button = tk.Button(window, text="Bắt đầu", command=start)
+start_button = tk.Button(window, text="Bắt đầu", command=start_test)
 start_button.pack(pady=10)
 # Tạo hai khung hình ảnh
 

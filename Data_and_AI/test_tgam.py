@@ -5,9 +5,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import serial
 import time
-from decode import init_ser, read_one_byte,process_brainwave_data
+from decode import init_ser, read_one_byte, process_brainwave_data
 
-s = init_ser("COM3", 57600)
+s = init_ser("COM10", 57600)
 x = 0
 y = np.array([], dtype=int)
 # Open the serial port

@@ -10,10 +10,8 @@ from Preprocessing import slide_func, filter_data, FeatureExtract
 
 if serial.Serial:
     serial.Serial().close()
-time.sleep(1)
 # Open the serial port
-time.sleep(1)
-s = serial.Serial("COM4", baudrate=57600)  # COMx in window or /dev/ttyACMx in Ubuntu with x is number of serial port.
+s = serial.Serial("COM11", baudrate=57600)  # COMx in window or /dev/ttyACMx in Ubuntu with x is number of serial port.
 # path = r"Data_Iso\Subject_1_15Hz.txt"
 # file = open(path, "a")
 

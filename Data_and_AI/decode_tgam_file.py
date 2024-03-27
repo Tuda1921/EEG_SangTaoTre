@@ -1,17 +1,5 @@
-import serial
-
-
-def init_ser(port, baudrate):
-    if serial.Serial:
-        serial.Serial().close()
-    ser = serial.Serial(port,
-                        baudrate)  # COMx in window or /dev/ttyACMx in Ubuntu with x is number of serial port.
-    return ser
-
-
-def read_one_byte(ser):
-    return ser.read(1)[0]
-
+def read_one_byte(file):
+    return int(file.readline().strip())
 
 generated_checksum = 0
 checksum = 0
@@ -23,20 +11,19 @@ eeg_values = [0] * 8
 raw_data = 0
 big_packet = False
 
-
-def process_brainwave_data(ser):
+def process_brainwave_data(file):
     global big_packet, poor_quality, attention, meditation, raw_data, generated_checksum, checksum
-    if read_one_byte(ser) == 170:
-        if read_one_byte(ser) == 170:
-            payload_length = read_one_byte(ser)
+    if read_one_byte(file) == 170:
+        if read_one_byte(file) == 170:
+            payload_length = read_one_byte(file)
             if payload_length > 169:
                 return
             generated_checksum = 0
             for i in range(0, payload_length):
-                payload_data[i] = read_one_byte(ser)
+                payload_data[i] = read_one_byte(file)
                 generated_checksum += payload_data[i]
             print(payload_data)
-            checksum = read_one_byte(ser)
+            checksum = read_one_byte(file)
             generated_checksum = 255 - generated_checksum
             if checksum == generated_checksum:
                 poor_quality = 200
@@ -77,3 +64,10 @@ def process_brainwave_data(ser):
             big_packet = False
             return diction
     return -1
+
+
+# Open the file in read mode
+with open("testBT_TGAM.txt", "rb") as file:
+    while True:
+        data = process_brainwave_data(file)
+        # print(data)
